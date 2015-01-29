@@ -34,7 +34,7 @@ URL_E="&redirects&prop=revisions&rvprop=content&rawcontinue"
 '''
 def parse_and_return_joblist():
     '''
-        Parse input "||" separated lines of entities
+        Handles input
         Arguments: none
         Returns: a list, entity_list
     '''
@@ -48,13 +48,35 @@ def parse_and_return_joblist():
     
 def spider_master(jobList):
     jobs=[]
+    id=1
     for items in jobList:
         items_split=items.split("||")
         items_tuple=(items_split[0],items_split[1],items_split[2])
         jobs.append(items_tuple)
-    
+        
+    for items in jobs:
+#         print len(jobs)
+        print id
+        id=id+1
+        try:
+            print items[0]
+            url=URL_BASE_CH+URL_S+items[0]+URL_E
+            r=requests.get(url,headers=headers1,timeout=10.0)
+            f1=codecs.open("E:\\IOE\\"+items[0]+".txt",'w',encoding='utf-8',errors="ignore",buffering=1)
+            r.encoding='gbk'
+            f1.write(r.content.decode('gbk'))
+            f1.close()
+            
+        except IOError:
+            print "IO Error"
+            pass
+        
+        except Exception as e:
+            print e
+            pass
     
 def testCase():
-    parse_and_return_joblist()
+    raw_list=parse_and_return_joblist()
+    spider_master(raw_list)
     
 testCase()
