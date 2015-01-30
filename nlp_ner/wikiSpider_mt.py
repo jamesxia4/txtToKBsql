@@ -16,11 +16,13 @@ import os
 import codecs
 import json
 import urllib
+import urllib2
+import httplib
 
 '''
     Environmental Variables:
 '''
-ENTITY_PATH="C:\\Users\\S1LV3R@DELL\\Desktop"
+ENTITY_PATH="C:\\Users\\S1LV3R\\Desktop"
 ENTITY_FILENAME="Newlist.txt"
 
 headers1={'content-type':'application/json'}
@@ -47,6 +49,7 @@ def parse_and_return_joblist():
     return entity_list
     
 def spider_master(jobList):
+    os.chdir("E:\\EIO")
     jobs=[]
     id=1
     for items in jobList:
@@ -60,12 +63,14 @@ def spider_master(jobList):
         id=id+1
         try:
             print items[0]
-            url=URL_BASE_CH+URL_S+items[0]+URL_E
-            r=requests.get(url,headers=headers1,timeout=10.0)
-            f1=codecs.open("E:\\IOE\\"+items[0]+".txt",'w',encoding='utf-8',errors="ignore",buffering=1)
-            r.encoding='gbk'
-            f1.write(r.content.decode('gbk'))
-            f1.close()
+            url=URL_BASE_CH+URL_S+items[0].encode("utf-8")+URL_E
+            r=requests.get(url,timeout=10.0)
+            print r.status_code
+#             print r.text
+            with codecs.open(items[0]+'.txt','w',encoding='utf-8',errors='ignore',buffering=1) as fd_out:
+                fd_out.write(r.text)
+            fd_out.close()
+
             
         except IOError:
             print "IO Error"
